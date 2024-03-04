@@ -1,15 +1,15 @@
 {
-  "name": "@supabase/postgrest-js",
+  "name": "@storeo/storeo-js",
   "version": "0.0.0-automated",
-  "description": "Isomorphic PostgREST client",
+  "description": "StoreO client",
   "keywords": [
     "postgrest",
     "supabase"
   ],
-  "homepage": "https://github.com/supabase/postgrest-js",
-  "bugs": "https://github.com/supabase/postgrest-js/issues",
+  "homepage": "",
+  "bugs": "",
   "license": "MIT",
-  "author": "Supabase",
+  "author": "minhdtb",
   "files": [
     "dist",
     "src"
@@ -17,7 +17,7 @@
   "main": "dist/main/index.js",
   "module": "dist/module/index.js",
   "types": "dist/module/index.d.ts",
-  "repository": "supabase/postgrest-js",
+  "repository": "storeo-project/storeo-js",
   "scripts": {
     "clean": "rimraf dist docs/v2",
     "format": "prettier --write \"{src,test}/**/*.ts\"",
