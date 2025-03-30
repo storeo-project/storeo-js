@@ -18,6 +18,9 @@ test('not', async () => {
         Object {
           "status": "ONLINE",
         },
+        Object {
+          "status": "ONLINE",
+        },
       ],
       "error": null,
       "status": 200,
@@ -81,6 +84,9 @@ test('neq', async () => {
           "username": "awailas",
         },
         Object {
+          "username": "jsonuser",
+        },
+        Object {
           "username": "dragarcia",
         },
       ],
@@ -99,6 +105,9 @@ test('gt', async () => {
       "data": Array [
         Object {
           "id": 2,
+        },
+        Object {
+          "id": 4,
         },
       ],
       "error": null,
@@ -119,6 +128,9 @@ test('gte', async () => {
         },
         Object {
           "id": 2,
+        },
+        Object {
+          "id": 4,
         },
       ],
       "error": null,
@@ -330,6 +342,9 @@ test('in', async () => {
         Object {
           "status": "ONLINE",
         },
+        Object {
+          "status": "ONLINE",
+        },
       ],
       "error": null,
       "status": 200,
@@ -355,6 +370,56 @@ test('contains', async () => {
   `)
 })
 
+test('contains with json', async () => {
+  const res = await postgrest
+    .from('users')
+    .select('data')
+    .contains('data', { foo: { baz: 'string value' } })
+  expect(res).toMatchInlineSnapshot(`
+    Object {
+      "count": null,
+      "data": Array [
+        Object {
+          "data": Object {
+            "foo": Object {
+              "bar": Object {
+                "nested": "value",
+              },
+              "baz": "string value",
+            },
+          },
+        },
+      ],
+      "error": null,
+      "status": 200,
+      "statusText": "OK",
+    }
+  `)
+})
+
+test('contains with array', async () => {
+  const res = await postgrest
+    .from('cornercase')
+    .select('array_column')
+    .contains('array_column', ['test'])
+  expect(res).toMatchInlineSnapshot(`
+    Object {
+      "count": null,
+      "data": Array [
+        Object {
+          "array_column": Array [
+            "test",
+            "one",
+          ],
+        },
+      ],
+      "error": null,
+      "status": 200,
+      "statusText": "OK",
+    }
+  `)
+})
+
 test('containedBy', async () => {
   const res = await postgrest.from('users').select('age_range').containedBy('age_range', '[1,2)')
   expect(res).toMatchInlineSnapshot(`
@@ -365,6 +430,38 @@ test('containedBy', async () => {
           "age_range": "[1,2)",
         },
       ],
+      "error": null,
+      "status": 200,
+      "statusText": "OK",
+    }
+  `)
+})
+
+test('containedBy with json', async () => {
+  const res = await postgrest
+    .from('users')
+    .select('data')
+    .containedBy('data', { foo: { baz: 'string value' } })
+  expect(res).toMatchInlineSnapshot(`
+    Object {
+      "count": null,
+      "data": Array [],
+      "error": null,
+      "status": 200,
+      "statusText": "OK",
+    }
+  `)
+})
+
+test('containedBy with array', async () => {
+  const res = await postgrest
+    .from('cornercase')
+    .select('array_column')
+    .containedBy('array_column', ['test'])
+  expect(res).toMatchInlineSnapshot(`
+    Object {
+      "count": null,
+      "data": Array [],
       "error": null,
       "status": 200,
       "statusText": "OK",
@@ -420,6 +517,9 @@ test('rangeGte', async () => {
         },
         Object {
           "age_range": "[25,35)",
+        },
+        Object {
+          "age_range": "[20,30)",
         },
         Object {
           "age_range": "[20,30)",
@@ -480,6 +580,32 @@ test('overlaps', async () => {
       "data": Array [
         Object {
           "age_range": "[20,30)",
+        },
+        Object {
+          "age_range": "[20,30)",
+        },
+      ],
+      "error": null,
+      "status": 200,
+      "statusText": "OK",
+    }
+  `)
+})
+
+test('overlaps with array', async () => {
+  const res = await postgrest
+    .from('cornercase')
+    .select('array_column')
+    .overlaps('array_column', ['test'])
+  expect(res).toMatchInlineSnapshot(`
+    Object {
+      "count": null,
+      "data": Array [
+        Object {
+          "array_column": Array [
+            "test",
+            "one",
+          ],
         },
       ],
       "error": null,

@@ -27,6 +27,20 @@ test('order', async () => {
         },
         Object {
           "age_range": "[20,30)",
+          "catchphrase": "'json' 'test'",
+          "data": Object {
+            "foo": Object {
+              "bar": Object {
+                "nested": "value",
+              },
+              "baz": "string value",
+            },
+          },
+          "status": "ONLINE",
+          "username": "jsonuser",
+        },
+        Object {
+          "age_range": "[20,30)",
           "catchphrase": "'fat' 'rat'",
           "data": null,
           "status": "ONLINE",
@@ -57,6 +71,13 @@ test('order on multiple columns', async () => {
     Object {
       "count": null,
       "data": Array [
+        Object {
+          "channel_id": 3,
+          "data": null,
+          "id": 4,
+          "message": "Some message on channel wihtout details",
+          "username": "supabot",
+        },
         Object {
           "channel_id": 2,
           "data": null,
@@ -122,10 +143,17 @@ test('range', async () => {
         },
         Object {
           "age_range": "[20,30)",
-          "catchphrase": "'fat' 'rat'",
-          "data": null,
+          "catchphrase": "'json' 'test'",
+          "data": Object {
+            "foo": Object {
+              "bar": Object {
+                "nested": "value",
+              },
+              "baz": "string value",
+            },
+          },
           "status": "ONLINE",
-          "username": "dragarcia",
+          "username": "jsonuser",
         },
       ],
       "error": null,
@@ -257,7 +285,39 @@ test('csv', async () => {
     supabot,,\\"[1,2)\\",ONLINE,\\"'cat' 'fat'\\"
     kiwicopple,,\\"[25,35)\\",OFFLINE,\\"'bat' 'cat'\\"
     awailas,,\\"[25,35)\\",ONLINE,\\"'bat' 'rat'\\"
+    jsonuser,\\"{\\"\\"foo\\"\\": {\\"\\"bar\\"\\": {\\"\\"nested\\"\\": \\"\\"value\\"\\"}, \\"\\"baz\\"\\": \\"\\"string value\\"\\"}}\\",\\"[20,30)\\",ONLINE,\\"'json' 'test'\\"
     dragarcia,,\\"[20,30)\\",ONLINE,\\"'fat' 'rat'\\"",
+      "error": null,
+      "status": 200,
+      "statusText": "OK",
+    }
+  `)
+})
+
+test('geojson', async () => {
+  const res = await postgrest.from('shops').select().geojson()
+  expect(res).toMatchInlineSnapshot(`
+    Object {
+      "count": null,
+      "data": Object {
+        "features": Array [
+          Object {
+            "geometry": Object {
+              "coordinates": Array [
+                -71.10044,
+                42.373695,
+              ],
+              "type": "Point",
+            },
+            "properties": Object {
+              "address": "1369 Cambridge St",
+              "id": 1,
+            },
+            "type": "Feature",
+          },
+        ],
+        "type": "FeatureCollection",
+      },
       "error": null,
       "status": 200,
       "statusText": "OK",
@@ -270,16 +330,22 @@ test('abort signal', async () => {
   ac.abort()
   const res = await postgrest.from('users').select().abortSignal(ac.signal)
   expect(res).toMatchInlineSnapshot(
-    { error: { details: expect.any(String) } },
+    {
+      error: {
+        code: expect.any(String),
+        details: expect.any(String),
+        message: expect.stringMatching(/^AbortError:/),
+      },
+    },
     `
     Object {
       "count": null,
       "data": null,
       "error": Object {
-        "code": "",
+        "code": Any<String>,
         "details": Any<String>,
         "hint": "",
-        "message": "AbortError: The user aborted a request.",
+        "message": StringMatching /\\^AbortError:/,
       },
       "status": 0,
       "statusText": "",
